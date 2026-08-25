@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#050505">
+<title>Sorteo KRIS TV</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 10%,#302000 0,#0b0b0b 38%,#000 100%);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center}
+.app{width:min(900px,100%);min-height:100vh;padding:20px 14px 30px;display:flex;flex-direction:column;align-items:center}
+.logo{font-weight:900;font-size:clamp(34px,9vw,70px);letter-spacing:4px;background:linear-gradient(#fff,#f8d36a,#9d6a00);-webkit-background-clip:text;color:transparent;text-shadow:0 0 25px rgba(255,190,0,.18)}
+.sub{font-size:14px;letter-spacing:3px;color:#d9c28b;margin-top:-6px;margin-bottom:16px}
+.card{width:100%;border:1px solid #6d5116;border-radius:24px;background:rgba(8,8,8,.78);box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 0 30px rgba(255,190,0,.04);padding:14px}
+.stage{position:relative;width:min(720px,100%);aspect-ratio:1;max-height:72vh;margin:auto;display:grid;place-items:center}
+canvas{width:100%;height:100%;display:block}
+.pointer{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:3;width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:0;border-bottom:38px solid #fff;filter:drop-shadow(0 0 9px #f5b900)}
+.pointer:after{content:"";position:absolute;left:-10px;top:3px;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:22px solid #d99b00}
+.center{position:absolute;width:24%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff4bd 0,#e3a812 30%,#6f4700 65%,#120d00 100%);border:5px solid #fff1ad;box-shadow:0 0 25px rgba(255,190,0,.65);display:grid;place-items:center;font-weight:1000;color:#160f00;font-size:clamp(12px,3vw,22px);text-align:center}
+.stats{display:flex;justify-content:space-between;gap:8px;margin:10px 2px 14px;color:#d7c79e;font-size:13px}
+button{width:100%;border:0;border-radius:16px;padding:17px 18px;font-size:18px;font-weight:900;letter-spacing:1px;cursor:pointer}
+#spin{background:linear-gradient(135deg,#fff0a6,#d99a08 45%,#7a4b00);color:#130d00;box-shadow:0 8px 25px rgba(219,157,15,.28)}
+#spin:disabled{opacity:.45}
+.secondary{margin-top:9px;background:#171717;color:#e7d9b0;border:1px solid #5d481b}
+.winner{display:none;margin-top:15px;text-align:center;padding:20px;border-radius:20px;border:1px solid #a87810;background:linear-gradient(180deg,rgba(255,190,0,.12),rgba(255,190,0,.03));animation:pop .5s ease}
+.winner.show{display:block}
+.winner .label{font-size:12px;letter-spacing:4px;color:#d5bb70}
+.winner .name{font-size:clamp(28px,8vw,58px);font-weight:1000;margin-top:8px;overflow-wrap:anywhere;background:linear-gradient(#fff,#f6c842);-webkit-background-clip:text;color:transparent}
+.history{margin-top:14px;border-top:1px solid #332810;padding-top:12px;max-height:180px;overflow:auto}
+.history h3{font-size:12px;letter-spacing:2px;color:#a99462;margin:0 0 8px}
+.history div{padding:7px 0;border-bottom:1px solid #1e1e1e;color:#ddd}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.small{font-size:11px;color:#756a52;text-align:center;margin-top:12px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="logo">KRIS TV</div>
+  <div class="sub">SORTEO OFICIAL</div>
+  <div class="card">
+    <div class="stage">
+      <canvas id="wheel"></canvas>
+      <div class="pointer"></div>
+      <div class="center">KRIS<br>TV</div>
+    </div>
+    <div class="stats"><span id="count"></span><span id="status">Listo para sortear</span></div>
+    <button id="spin">🎰 SORTEAR GANADOR</button>
+    <button class="secondary" id="reset">↻ REINICIAR</button>
+    <div class="winner" id="winner">
+      <div class="label">🏆 GANADOR</div>
+      <div class="name" id="winnerName"></div>
+    </div>
+    <div class="history" id="history"><h3>GANADORES</h3></div>
+    <div class="small">Los participantes se han cargado desde el PDF. Se usan únicamente los nombres de usuario; no se muestran contraseñas.</div>
+  </div>
+</div>
+<script>
+const participants = ["Oscargutierrez","Galvany","Cabo","Pili","GioHABITACION","GioSALON","Bilbao","ngel","XaviCOLE","ManuelFIRE","Aitor1","MarioDiaz","Manuel","JavierDomnguez","Blaypastor","Nieves","Carlos","AntonioAlvarado","Ramonprat","Oliver","Andy","DavidboadaINDIVIDUL","Davidboada2","ManoloPADRE","Julenlopez","Marioserrano","PabloLU","Carol","Jol","Alvarobeas","JuanManuel","EROS","FernandoGGGHIJO","Marioalfaro","Vane","Raquero","FranciscoPardo","Noel","Baena","Nataliasuegro","Alfonsosuegro","Kisko","Chantal","Manuelforte","Carlisdominicano","MaribelHIJA","Jorgecabrera","Paqui","Javigarcia","Victormartinez","Erichectorpadre","Marcmolero","Jaime","HermanaJOSE","Lauradiaz","Veja","MarcosMOVIL","Miguelvecino","Enrique","ManuPAREJA","Marcos","OlgagervilleTARRAGONA","MiguelJOSE","Davidgolden","ManelFIRE","Mariapanusa","Raulmolina","Antoniotrullen","Juanvicente","Olga","Jere","Vicentevaliente2","Vicentevaliente1","Tonialonso","JordipuigoriolTABLET","JairoPADRE","JosefernandezNOEL","Pacoalbert","Davidestigarriba","Sergi","MitellombiPADRE","Xavi1","Oscarpulgarin","SobrinoJOSE","LolaHABITACION","LolaCOMEDOR","Jenny","LuzHABITACION","Luis","AlbertJOSE","Nanifresh","Ajila","Maribel","Ami","Albertprat","Pepe","DamianJOSE","JairoHIJOjose","AndoniFIRE","Lau","Nuria","Albert","Jesusbernal","Giovanypauta","Montseerica","Eliot","Sandrarovira","PererichardPADRE","Joseluis","CheposkyHABITACION","Cheposkysalon","Alvarotelegram","Markus","Uniform21","Adrian","Alfonso","Brian","Miguelandalucia","Ricardocenteno","Vicente","Amigovesko","Felixmacias","Duke","Marco","JavigarciaJOSE","Loliyaiza","Frantrilla","IsmaelJOSE","AsierLOCAL","AlejandroSUEGRO","Oscarbermudez","Victorangel","JavierduranFIRE","Abraham","PepCaterina","MarcROMA","Luzcomedor","Couto","Igor","Primi","Suly","Vero","ManuHIJA","Roger","Inigo","Jordi","FernandoG","Jefefran","Javier","Carlosboli","Irene","Alain","Susana","Julianvalencia","Miguelnunez","5cd8843b45d5","257599a7b8b7","0822e39813e5","Carrero","Noe","Rafa","Marc","Mariovigara","Diegomartinez","Joseantonio","Erichector","Franromamovilmadte","Abeliptv","Adrianmathes","Andrius","Jairo","Pitu","Christopher","Irenesuya","Pedrohabitacion","597ce13abf61","GuilleNURIA","Pedroalberthijo","Javierbanos","Angel","Dani","AdrianRS","9fb121e553f8","Mariajesus","Franciscomarco","Patricio","Franciscovalero","Miquel","Eugenio","Antoniosoto","Juancarlos","Junior","Pau","Santiantuneztablet","ToniC","Cisneros","Alejandroquilestv","Joanfont","Mansouri","Eli","David","Jesus","Ivan","Cristina2","Cristina","JaimeVICENTE","PotxiPADRE","Potxi","Loloaleman","Salva","Antoniocenteno","Jordipuigoriol","Robert2519","GASPItoni","Pedro","Pacopadrefran","Javierrita","Mingo","RafaJOSE","Jaume2","Cuellarsacristan","Gaspi","FernandoCJ","Sobrinomiguelandalucia","German","Josevalenciapadre","Fernandogonzalez","Jero","Imanol","Jose","Asiertella","Leoduchueli","Oscarmartinez","Normix","Javi","MerchePUEBLO","Kevin3","Rino","Juangarcia","MarcselgasPADRE","Danigarcia","Edu","MercheDORMITORIO2","MercheDORMIRORIO1","Merche1SALON","CarlosG","LarosoMOGsuya","Rosaalzina","Padreeddie","Larosopadre","Jaume","Pinero","Gabrivilla","Amigovictor","Marcgarcia","Pablo","JoseJAIRO","Carlosjulino","Oscarpalet","Moragas","Jordiguillen","YolandaDuarte","Ericasuegro","Francisco","Hijoscasa","Marcosdonosomovil","Sandrajaume","AlbertduranMOVIL","NoelANTONIO","Lakhvirnar","Joseperez2","Pascual","Javiermontes","Hectorsuegromiguel","Gonzalo","CarlosLORENA","Julio","Marcosgallego","Damian","Richard","Romina","Papa","JoselePADRE","Adamtorren","Marccentellas","Joseantoniomansilla","JoseGOGLE","DavidMOVIL","Albertosanchez","Ericsuya","Antonioconil","Antoniomoreno","Jara","IsmaRO","Anthony","JoseJUANPADRE","JoseJUAN","Pepelu","Alexis","Kevin2","Kevin1","DavidHOSPI","Marctrelles","Robertocaceres","Lori","Guillermodiezsuya","Eliana","Raulgarcia","Marctrilla","Ernesto","Lorena","Pedrocorrales","Fran2","Fran","Rafaelmartin","FrancastelldefelsMOVIL","JesusbernalPADRE","Guillermo","Edgar","Juanma","Eduardoescobar","Estel","Sara","Carmenmondejarcunao","Maribanez","AlexenekoMOVIL","Josele","Aida","JavierVL","Goyo","Antoniovillanueva","JavitelegramMOVIL","Ritasantana","Pedrogallego","Jorditorres","JavitelegramPADRE","Anagalan","Juangisbert","Josemagen","Josegomez","Xavisolsona","Cristianfarnhi","Txucu","Kamal","Yeri","Albertobetancor","Josearboleda2","Ricardriba","GerardTV","Oscarlarreategi","GerardMOVIL","Luisguillen2","Luisguillen1","Silvia","Marcosdonoso","Santibouza","MartaPADRE","Emiliamartinez","Josearboleda","Sergio","Salvadorclaudia","Pacoolmo","AlbertoGolden","Eloyortega","Lorenapadre","Joaquintorres2","Joaquintorres","Antobrosas","Edu633","Martentromp","ManuelGUILLERMO","Hector","RicardoAl","JosePEREZ","CristinaRDORMITORIO","CristinaRHABITACION","CristinaRCOMEDOR","Santiantunez","Ikercandelas2MADRE","Ikercandelas2SUYA","HermanavicenteROCIO","DaniDANI","OlgaDANI","AlbertoDANI","LauraDANI","Javiroso","Adrianrodrigez","MeriTATA","CarlosSUYA","CarlosCOMEDORMADRE","CarlosHABITACIONMADRE","JavierritaLOLO","HERMANAmiguel","BernatlopezSUEGRO","ManuPADRE","Yaiza","Antonio","Isratata","Aroa","Asier","JfgrasBARCELONA","JfgrasIPAD","JfgrasUK","Germancordon","JoseKEVIN","JoseFRANCISCO","Manelcamara","Fernandotabuada","Adri","Xavialberto","Marcmovil","DavidcapiVICTOR","LuisGOLDEN","MANUELcasa","CristianLS","Miguelperez","Antoniocastell","AngelRAUL","LuciaSEVILLA","JoseISMAEL","Izei","Angel2","AngelJUAN","Josepbalaguer","Josevalencia","Ricardoolga","Xavigalvany","Estherrp","Francastelldefels","Josepmateu","Cabyjuanostos","Victorgarciafontarrosa","Maripaz","Antonioaraujo","AngelMARCOS","Alexpadre","Carlospacha1","Nataliagelida","Mariajose","Ramon","Pep","Pepeluis","AngelDJ","Juancamarulanda","Pedroslberto","Pepzoco","Sheilaisra2","Sheilaisra1","Angyisra","Johan","Jimmy","Eduardo","Davidros","Oliverthebarber","Ericpadre","Luisgallego","Monicacemsa","Jordi615","Gdg","Albertsendra","FinasolerVERA","CarlostaranconFINA","Carlostarancon1","Javieralbacalero","Mangelkern","Angelcaldetas","Robert3","Robert2","Robert1","Juanmaeki","Galder","Jordifernandez","Davidmuntanola","Horacio","Litus","Gonzalogorrin","AntonioPACO","Fernandocastell","Cesarortiz","Romahabitacion","Romacomedor","Pererichard","DAYTONA","Fran02","Israpulgarin","Albertomorales","Franciscomiguel","Ekisologaistua","Guillermodiez","Barranco","Xavioscarpalet","JoseDAVID","Alejandromunoz","Marianela","Lluisdelolmo","Sauljimmy","Javierpueyo","Blas","Monicacalvante","Xavi","Uri","GUILLERMOdavidcapi","Santosdavidcapi","Thor2","Thor1","Oscarlarretegi","Alexagua","Kelvin","Alexruiz","JosetelegramPADRE","Josetelegramsuya","Xaviergarcia","Dadvega","Martasuya","Franciscocantero","Tonibonilla","ChiviCOMEDOR","Chivihabitacion","Carlosvicente","DavidcapiCARLOS","EugenvictorMOVIL","Eugenvictortv","Sebas2ANDROID","Sebas1SMART","Davidalsedar","Pedrogarrido","Claudia","Claudio","TechhomePADRE","TechhomeERIC","Josefrancisco","JoseDUERTO","NarcisopintoPADRE","Narcisopinto","Radwan","Alejandrorosa","Danidisa","AlbertoFRANCIA","Marcosuegro","Franciscobravo","Alexmunoz","Sarayalfonso","Antonioaron","ToniRUZAFA","Magimarsol","Juangallego","Albertocantillo","Juanjo","Gila","Elisabeth","OscarLeal","Janmartinez","Yolanda","Faby","Antoniojesusdoblas","Jur","Felix","Ana25","Juanele","Pacoisa","Sabi","Isabelamante","Sheila","Davidkristv2026","Davidcapisuya","Alvarogolden","Manuelgomez3","Manuelgomez2","Manuelgomez1","Gerarcarreras","Fernandorivero","Carlosgolden","Sergibcnkristv","Charlieone","Remevalencia2","Javikristv25","Albertoespana","Movilmio","Sergio2026","FrangoldenHABITACION","FrangoldenCOMEDOR","Txusmota","Joseantoniomontes","Luisguillensuegro2","Luisguillensuegro1","Jurpadre2026","Carlos609","Bernatlopez","Israangisuegro","Daniarea","Angelkrisvpruebas","Cristianhernandez"];
+const canvas=document.getElementById("wheel"), ctx=canvas.getContext("2d");
+const spinBtn=document.getElementById("spin"), resetBtn=document.getElementById("reset");
+const winnerBox=document.getElementById("winner"), winnerName=document.getElementById("winnerName");
+const statusEl=document.getElementById("status"), countEl=document.getElementById("count"), historyEl=document.getElementById("history");
+countEl.textContent=participants.length+" participantes";
+let pool=[...participants], angle=0, spinning=false, winners=[];
+
+function resize(){
+  const r=canvas.getBoundingClientRect(), d=Math.max(1,Math.min(2,devicePixelRatio||1));
+  canvas.width=Math.round(r.width*d); canvas.height=Math.round(r.height*d); ctx.setTransform(d,0,0,d,0,0); draw();
+}
+function draw(){
+  const w=canvas.clientWidth,h=canvas.clientHeight,cx=w/2,cy=h/2,r=Math.min(w,h)*.44;
+  ctx.clearRect(0,0,w,h);
+  const n=pool.length, step=Math.PI*2/n;
+  for(let i=0;i<n;i++){
+    const a0=angle+i*step-Math.PI/2, a1=a0+step;
+    const grad=ctx.createLinearGradient(cx,cy,cx+r,cy);
+    grad.addColorStop(0,i%2?"#9b6908":"#f4c544"); grad.addColorStop(1,i%2?"#2e1e00":"#6d4500");
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a0,a1);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,.28)";ctx.lineWidth=1;ctx.stroke();
+    if(n<=120){
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(a0+step/2);ctx.textAlign="right";ctx.fillStyle="#fff";ctx.font="700 "+Math.max(7,Math.min(13,220/n))+"px Arial";
+      let label=pool[i]; if(label.length>18) label=label.slice(0,17)+"…";
+      ctx.fillText(label,r-8,4);ctx.restore();
+    }
+  }
+  ctx.beginPath();ctx.arc(cx,cy,r+2,0,Math.PI*2);ctx.strokeStyle="#f8d36a";ctx.lineWidth=6;ctx.stroke();
+}
+function renderHistory(){
+  historyEl.innerHTML="<h3>GANADORES</h3>"+winners.map((x,i)=>"<div>"+(i+1)+". "+escapeHtml(x)+"</div>").join("");
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function spin(){
+  if(spinning||pool.length===0)return;
+  spinning=true; spinBtn.disabled=true; resetBtn.disabled=true; winnerBox.classList.remove("show"); statusEl.textContent="Girando…";
+  const targetIndex=Math.floor(Math.random()*pool.length);
+  const n=pool.length, step=Math.PI*2/n;
+  const desired=-(targetIndex*step+step/2);
+  const start=angle, extra=(6+Math.floor(Math.random()*3))*Math.PI*2;
+  const delta=extra+((desired-start)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+  const end=start+delta, duration=5200+Math.random()*1200, t0=performance.now();
+  function anim(t){
+    const p=Math.min(1,(t-t0)/duration), e=1-Math.pow(1-p,4);
+    angle=start+(end-start)*e; draw();
+    if(p<1) requestAnimationFrame(anim); else finish(targetIndex);
+  }
+  requestAnimationFrame(anim);
+}
+function finish(i){
+  const winner=pool[i]; winners.push(winner); winnerName.textContent=winner; winnerBox.classList.add("show");
+  pool.splice(i,1); renderHistory(); countEl.textContent=pool.length+" participantes restantes"; statusEl.textContent="¡Sorteo terminado!";
+  spinning=false; resetBtn.disabled=false; spinBtn.disabled=pool.length===0; if(pool.length===0) spinBtn.textContent="SORTEO COMPLETADO"; draw();
+}
+function reset(){
+  pool=[...participants]; winners=[]; angle=0; winnerBox.classList.remove("show"); statusEl.textContent="Listo para sortear"; countEl.textContent=pool.length+" participantes"; spinBtn.disabled=false; spinBtn.textContent="🎰 SORTEAR GANADOR"; renderHistory(); draw();
+}
+spinBtn.onclick=spin; resetBtn.onclick=reset; window.addEventListener("resize",resize); renderHistory(); resize();
+</script>
+</body>
+</html>
